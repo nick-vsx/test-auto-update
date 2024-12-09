@@ -7,7 +7,6 @@ import { autoUpdater } from 'electron-updater'
 autoUpdater.autoDownload = false
 autoUpdater.allowDowngrade = true
 autoUpdater.allowPrerelease = true
-autoUpdater.requireExactVersion = false
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 

@@ -1,7 +1,6 @@
 import './style.css'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/electron-vite.svg'
-import { setupCounter } from './counter.ts'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -29,8 +28,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     </p>
   </div>
 `
-
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
 
 // 更新相關的 DOM 元素
 const checkUpdateBtn = document.getElementById('checkUpdate') as HTMLButtonElement
