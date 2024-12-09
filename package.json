@@ -1,13 +1,13 @@
 {
   "name": "test-auto-update",
   "private": true,
-  "version": "1.1.11",
+  "version": "1.1.12",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
     "preview": "vite preview",
-    "publish": "electron-builder -p always"
+    "publish": "rm -rf dist dist-electron && tsc && vite build && electron-builder -p always"
   },
   "devDependencies": {
     "typescript": "^5.2.2",
