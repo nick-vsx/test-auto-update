@@ -8543,9 +8543,9 @@ function lu() {
   ee = new Ys({
     icon: st.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
-      preload: st.join(ou, "preload.mjs"),
-      nodeIntegration: !0,
-      contextIsolation: !1
+      preload: st.join(ou, "preload.js"),
+      contextIsolation: !0,
+      nodeIntegration: !1
     }
   }), ee.webContents.on("did-finish-load", () => {
     ee == null || ee.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());

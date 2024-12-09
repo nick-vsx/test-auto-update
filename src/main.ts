@@ -42,49 +42,49 @@ const installUpdateBtn = document.getElementById('installUpdate') as HTMLButtonE
 
 // 檢查更新按鈕點擊事件
 checkUpdateBtn.addEventListener('click', () => {
-  window.ipcRenderer.send('check-for-update')
+  window.electronAPI.checkForUpdate()
   updateStatus.textContent = '正在檢查更新...'
 })
 
 // 安裝更新按鈕點擊事件
 installUpdateBtn.addEventListener('click', () => {
-  window.ipcRenderer.send('quit-and-install')
+  window.electronAPI.quitAndInstall()
 })
 
 // 監聽更新事件
-window.ipcRenderer.on('update-checking', () => {
+window.electronAPI.onUpdateChecking(() => {
   updateStatus.textContent = '正在檢查更新...'
 })
 
-window.ipcRenderer.on('update-available', (_event, info) => {
+window.electronAPI.onUpdateAvailable((info) => {
   updateStatus.textContent = `發現新版本: ${info.version}`
   updateProgress.style.display = 'block'
 })
 
-window.ipcRenderer.on('update-not-available', () => {
+window.electronAPI.onUpdateNotAvailable(() => {
   updateStatus.textContent = '目前已是最新版本'
   updateProgress.style.display = 'none'
 })
 
-window.ipcRenderer.on('update-error', (_event, error) => {
+window.electronAPI.onUpdateError((error) => {
   updateStatus.textContent = `更新錯誤: ${error}`
   updateProgress.style.display = 'none'
 })
 
-window.ipcRenderer.on('update-progress', (_event, progressObj) => {
+window.electronAPI.onUpdateProgress((progressObj) => {
   const percent = Math.round(progressObj.percent)
   progressBar.value = percent
   progressText.textContent = `${percent}%`
   updateStatus.textContent = `正在下載更新: ${percent}%`
 })
 
-window.ipcRenderer.on('update-downloaded', () => {
+window.electronAPI.onUpdateDownloaded(() => {
   updateStatus.textContent = '更新已下載完成'
   updateProgress.style.display = 'none'
   installUpdateBtn.style.display = 'block'
 })
 
 // 原有的主進程消息監聽
-window.ipcRenderer.on('main-process-message', (_event, message) => {
+window.electronAPI.onMainMessage((message) => {
   console.log(message)
 })

@@ -1,7 +1,7 @@
 {
-  "name": "test-auto-updated",
+  "name": "test-auto-update",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -20,5 +20,9 @@
   "dependencies": {
     "electron-updater": "^6.3.9"
   },
-  "main": "dist-electron/main.js"
+  "main": "dist-electron/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nick-vsx/test-auto-update.git"
+  }
 }
