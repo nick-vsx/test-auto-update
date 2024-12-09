@@ -18,6 +18,7 @@
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}",
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
+    "identity": "TestAutoUpdateCert",
     "entitlements": "build/entitlements.mac.plist",
     "entitlementsInherit": "build/entitlements.mac.plist"
   },

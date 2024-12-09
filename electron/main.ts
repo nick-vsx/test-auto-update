@@ -3,6 +3,12 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { autoUpdater } from 'electron-updater'
 
+// 添加這行配置
+autoUpdater.autoDownload = false
+autoUpdater.allowDowngrade = true
+autoUpdater.allowPrerelease = true
+autoUpdater.requireExactVersion = false
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 process.env.APP_ROOT = path.join(__dirname, '..')
@@ -17,7 +23,7 @@ let win: BrowserWindow | null
 
 // 添加更新檢查函數
 function checkForUpdates() {
-  autoUpdater.checkForUpdatesAndNotify()
+  autoUpdater.checkForUpdates()
 }
 
 // 設置自動更新事件監聽
@@ -28,6 +34,8 @@ function setupAutoUpdater() {
 
   autoUpdater.on('update-available', (info) => {
     win?.webContents.send('update-available', info)
+    // 手動下載更新
+    autoUpdater.downloadUpdate()
   })
 
   autoUpdater.on('update-not-available', (info) => {
