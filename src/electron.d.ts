@@ -5,7 +5,12 @@ interface ElectronAPI {
   onUpdateAvailable: (callback: (info: any) => void) => void
   onUpdateNotAvailable: (callback: (info: any) => void) => void
   onUpdateError: (callback: (error: string) => void) => void
-  onUpdateProgress: (callback: (progress: { percent: number }) => void) => void
+  onUpdateProgress: (callback: (progress: {
+    percent: number;
+    bytesPerSecond: number;
+    transferred: number;
+    total: number;
+  }) => void) => void
   onUpdateDownloaded: (callback: (info: any) => void) => void
   onMainMessage: (callback: (message: string) => void) => void
   onVersion: (callback: (version: string) => void) => void

@@ -18,8 +18,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       <div id="updateStatus"></div>
       <div id="updateProgress" style="display: none">
         <progress id="progressBar" value="0" max="100"></progress>
+        <div id="downloadInfo"></div>
       </div>
-      <button id="installUpdate" style="display: none">安裝更新</button>
     </div>
     <p class="read-the-docs">
       Click on the Vite and TypeScript logos to learn more
@@ -28,17 +28,10 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 `
 
 // 更新相關的 DOM 元素
-// const checkUpdateBtn = document.getElementById('checkUpdate') as HTMLButtonElement
 const updateStatus = document.getElementById('updateStatus') as HTMLDivElement
 const updateProgress = document.getElementById('updateProgress') as HTMLDivElement
 const progressBar = document.getElementById('progressBar') as HTMLProgressElement
-const installUpdateBtn = document.getElementById('installUpdate') as HTMLButtonElement
-
-// 檢查更新按鈕點擊事件
-// checkUpdateBtn.addEventListener('click', () => {
-//   window.electronAPI.checkForUpdate()
-//   updateStatus.textContent = '正在檢查更新...'
-// })
+const downloadInfo = document.getElementById('downloadInfo') as HTMLDivElement
 
 // 監聽更新事件
 window.electronAPI.onUpdateChecking(() => {
@@ -62,14 +55,18 @@ window.electronAPI.onUpdateError((error) => {
 
 window.electronAPI.onUpdateProgress((progressObj) => {
   const percent = Math.round(progressObj.percent)
+  const speed = (progressObj.bytesPerSecond / (1024 * 1024)).toFixed(2)
+  const transferred = (progressObj.transferred / (1024 * 1024)).toFixed(2)
+  const total = (progressObj.total / (1024 * 1024)).toFixed(2)
+
   progressBar.value = percent
   updateStatus.textContent = `正在下載更新: ${percent}%`
+  downloadInfo.textContent = `${speed} MB/s (${transferred}MB / ${total}MB)`
 })
 
 window.electronAPI.onUpdateDownloaded(() => {
   updateStatus.textContent = '更新已下載完成'
   updateProgress.style.display = 'none'
-  installUpdateBtn.style.display = 'block'
   window.electronAPI.quitAndInstall() // 安裝更新
 })
 

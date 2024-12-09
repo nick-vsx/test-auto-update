@@ -63,74 +63,36 @@ h1 {
   color: #888;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
 
-/* 更新相關樣式 */
+
 .update-container {
-  margin-top: 2em;
+  margin: 2em auto;
+  max-width: 400px;
   padding: 1em;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.05);
 }
 
 #updateStatus {
-  margin: 1em 0;
-  padding: 0.5em;
+  margin-bottom: 1em;
   color: #888;
 }
 
 #updateProgress {
   margin: 1em 0;
-  text-align: center;
 }
 
-progress {
+#progressBar {
   width: 100%;
-  height: 10px;
-  border-radius: 5px;
-  background-color: #1a1a1a;
+  height: 8px;
+  border-radius: 4px;
+  margin-bottom: 0.5em;
 }
 
-progress::-webkit-progress-bar {
-  background-color: #1a1a1a;
-  border-radius: 5px;
-}
-
-progress::-webkit-progress-value {
-  background-color: #646cff;
-  border-radius: 5px;
-}
-
-#progressText {
-  display: block;
-  margin-top: 0.5em;
+#downloadInfo {
+  font-size: 0.9em;
   color: #888;
-}
-
-#installUpdate {
-  background-color: #646cff;
-  color: white;
-}
-
-#installUpdate:hover {
-  background-color: #535bf2;
+  margin-top: 0.5em;
 }
 
 @media (prefers-color-scheme: light) {
@@ -141,13 +103,7 @@ progress::-webkit-progress-value {
   a:hover {
     color: #747bff;
   }
-  button {
-    background-color: #f9f9f9;
-  }
   .update-container {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  progress::-webkit-progress-bar {
-    background-color: #f0f0f0;
+    background: rgba(0, 0, 0, 0.05);
   }
 }
