@@ -67,6 +67,8 @@ function createWindow() {
   })
 
   win.webContents.on('did-finish-load', () => {
+    // 發送版本號
+    win?.webContents.send('version', app.getVersion())
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
   })
 

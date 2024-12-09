@@ -11,7 +11,10 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <a href="https://www.typescriptlang.org/" target="_blank">
       <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
     </a>
-    <h1>Vite + TypeScript + Test</h1>
+    <h1>Vite + TypeScript</h1>
+    <div class="version-info">
+      Version: <span id="version">1.0.0</span>
+    </div>
     <div class="card">
       <button id="counter" type="button"></button>
     </div>
@@ -82,6 +85,14 @@ window.electronAPI.onUpdateDownloaded(() => {
   updateStatus.textContent = '更新已下載完成'
   updateProgress.style.display = 'none'
   installUpdateBtn.style.display = 'block'
+})
+
+// 顯示版本號
+window.electronAPI.onVersion((version) => {
+  const versionElement = document.getElementById('version')
+  if (versionElement) {
+    versionElement.textContent = version
+  }
 })
 
 // 原有的主進程消息監聽

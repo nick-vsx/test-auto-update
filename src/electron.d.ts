@@ -8,6 +8,7 @@ interface ElectronAPI {
   onUpdateProgress: (callback: (progress: { percent: number }) => void) => void
   onUpdateDownloaded: (callback: (info: any) => void) => void
   onMainMessage: (callback: (message: string) => void) => void
+  onVersion: (callback: (version: string) => void) => void
 }
 
 declare interface Window {
