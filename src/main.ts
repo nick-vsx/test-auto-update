@@ -15,11 +15,9 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       Version: <span id="version">1.0.0</span>
     </div>
     <div class="update-container">
-      <button id="checkUpdate">檢查更新</button>
       <div id="updateStatus"></div>
       <div id="updateProgress" style="display: none">
         <progress id="progressBar" value="0" max="100"></progress>
-        <span id="progressText">0%</span>
       </div>
       <button id="installUpdate" style="display: none">安裝更新</button>
     </div>
@@ -30,23 +28,17 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 `
 
 // 更新相關的 DOM 元素
-const checkUpdateBtn = document.getElementById('checkUpdate') as HTMLButtonElement
+// const checkUpdateBtn = document.getElementById('checkUpdate') as HTMLButtonElement
 const updateStatus = document.getElementById('updateStatus') as HTMLDivElement
 const updateProgress = document.getElementById('updateProgress') as HTMLDivElement
 const progressBar = document.getElementById('progressBar') as HTMLProgressElement
-const progressText = document.getElementById('progressText') as HTMLSpanElement
 const installUpdateBtn = document.getElementById('installUpdate') as HTMLButtonElement
 
 // 檢查更新按鈕點擊事件
-checkUpdateBtn.addEventListener('click', () => {
-  window.electronAPI.checkForUpdate()
-  updateStatus.textContent = '正在檢查更新...'
-})
-
-// 安裝更新按鈕點擊事件
-installUpdateBtn.addEventListener('click', () => {
-  window.electronAPI.quitAndInstall()
-})
+// checkUpdateBtn.addEventListener('click', () => {
+//   window.electronAPI.checkForUpdate()
+//   updateStatus.textContent = '正在檢查更新...'
+// })
 
 // 監聽更新事件
 window.electronAPI.onUpdateChecking(() => {
@@ -71,7 +63,6 @@ window.electronAPI.onUpdateError((error) => {
 window.electronAPI.onUpdateProgress((progressObj) => {
   const percent = Math.round(progressObj.percent)
   progressBar.value = percent
-  progressText.textContent = `${percent}%`
   updateStatus.textContent = `正在下載更新: ${percent}%`
 })
 
@@ -79,6 +70,7 @@ window.electronAPI.onUpdateDownloaded(() => {
   updateStatus.textContent = '更新已下載完成'
   updateProgress.style.display = 'none'
   installUpdateBtn.style.display = 'block'
+  window.electronAPI.quitAndInstall() // 安裝更新
 })
 
 // 顯示版本號
