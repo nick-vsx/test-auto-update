@@ -15,9 +15,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <div class="version-info">
       Version: <span id="version">1.0.0</span>
     </div>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
     <div class="update-container">
       <button id="checkUpdate">檢查更新</button>
       <div id="updateStatus"></div>
