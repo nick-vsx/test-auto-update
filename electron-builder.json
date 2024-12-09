@@ -4,11 +4,12 @@
   "asar": true,
   "productName": "TestAutoUpdate",
   "directories": {
-    "output": "release/${version}"
+    "output": "release/${version}",
+    "buildResources": "build"
   },
   "files": [
-    "dist",
-    "dist-electron"
+    "dist/**/*",
+    "dist-electron/**/*"
   ],
   "mac": {
     "target": [
