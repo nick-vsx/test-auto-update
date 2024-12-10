@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { autoUpdater } from 'electron-updater'
+import fs from 'node:fs'
 
 // 添加這行配置
 autoUpdater.autoDownload = false
@@ -20,8 +21,19 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 
 let win: BrowserWindow | null
 
+// 清理更新緩存
+function clearUpdateCache() {
+  const updateCachePath = path.join(app.getPath('home'), 'Library/Caches/test-auto-update-updater')
+  if (fs.existsSync(updateCachePath)) {
+    fs.rmSync(updateCachePath, { recursive: true, force: true })
+  }
+}
+
 // 添加更新檢查函數
 function checkForUpdates() {
+  // 清除緩存
+  clearUpdateCache()
+  
   // 清除應用程序的 HTTP 緩存
   if (win?.webContents) {
     win.webContents.session.clearCache()
