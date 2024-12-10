@@ -22,6 +22,13 @@ let win: BrowserWindow | null
 
 // 添加更新檢查函數
 function checkForUpdates() {
+  // 清除應用程序的 HTTP 緩存
+  if (win?.webContents) {
+    win.webContents.session.clearCache()
+    win.webContents.session.clearStorageData({
+      storages: ['cachestorage', 'shadercache', 'localstorage']
+    })
+  }
   autoUpdater.checkForUpdates()
 }
 
@@ -67,7 +74,7 @@ function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(app.getAppPath(), 'dist-electron/preload.js'),
       contextIsolation: true,
       nodeIntegration: false
     },
