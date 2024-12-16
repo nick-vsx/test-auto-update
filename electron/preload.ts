@@ -4,6 +4,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 更新相關
   checkForUpdate: () => ipcRenderer.send('check-for-update'),
   quitAndInstall: () => ipcRenderer.send('quit-and-install'),
+  startDownload: () => ipcRenderer.send('start-download'),
+  skipUpdate: () => ipcRenderer.send('skip-update'),
+  installUpdate: () => ipcRenderer.send('install-update'),
   
   // 監聽更新事件
   onUpdateChecking: (callback: () => void) => ipcRenderer.on('update-checking', callback),

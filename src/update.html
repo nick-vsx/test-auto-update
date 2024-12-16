@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>更新檢查</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      user-select: none;
+    }
+    .container {
+      text-align: center;
+    }
+    .status {
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .progress {
+      width: 100%;
+      margin: 10px 0;
+      display: none;
+    }
+    .progress progress {
+      width: 100%;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    button {
+      padding: 8px 16px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .primary {
+      background: #2196f3;
+      color: white;
+    }
+    .secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+    .download-info {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="status" id="status">正在檢查更新...</div>
+    <div class="progress" id="progress">
+      <progress id="progressBar" value="0" max="100"></progress>
+      <div class="download-info" id="downloadInfo"></div>
+    </div>
+    <div class="buttons">
+      <button id="updateButton" class="primary" style="display: none">下載更新</button>
+      <button id="installButton" class="primary" style="display: none">立即安裝</button>
+      <button id="skipButton" class="secondary" style="display: none">稍後再說</button>
+    </div>
+  </div>
+  <script>
+    const status = document.getElementById('status')
+    const progress = document.getElementById('progress')
+    const progressBar = document.getElementById('progressBar')
+    const downloadInfo = document.getElementById('downloadInfo')
+    const updateButton = document.getElementById('updateButton')
+    const installButton = document.getElementById('installButton')
+    const skipButton = document.getElementById('skipButton')
+
+    // 更新檢查中
+    window.electronAPI.onUpdateChecking(() => {
+      status.textContent = '正在檢查更新...'
+    })
+
+    // 發現新版本
+    window.electronAPI.onUpdateAvailable((info) => {
+      status.textContent = `發現新版本: ${info.version}`
+      updateButton.style.display = 'inline-block'
+      skipButton.style.display = 'inline-block'
+    })
+
+    // 下載進度
+    window.electronAPI.onUpdateProgress((progressObj) => {
+      const percent = Math.round(progressObj.percent)
+      const speed = (progressObj.bytesPerSecond / (1024 * 1024)).toFixed(2)
+      const transferred = (progressObj.transferred / (1024 * 1024)).toFixed(2)
+      const total = (progressObj.total / (1024 * 1024)).toFixed(2)
+
+      progress.style.display = 'block'
+      progressBar.value = percent
+      status.textContent = `正在下載更新: ${percent}%`
+      downloadInfo.textContent = `${speed} MB/s (${transferred}MB / ${total}MB)`
+      
+      updateButton.style.display = 'none'
+      skipButton.style.display = 'none'
+    })
+
+    // 下載完成
+    window.electronAPI.onUpdateDownloaded(() => {
+      status.textContent = '更新已下載完成'
+      progress.style.display = 'none'
+      installButton.style.display = 'inline-block'
+      skipButton.style.display = 'inline-block'
+    })
+
+    // 更新錯誤
+    window.electronAPI.onUpdateError((error) => {
+      status.textContent = `更新錯誤: ${error}`
+      skipButton.style.display = 'inline-block'
+    })
+
+    // 按鈕事件
+    updateButton.addEventListener('click', () => {
+      window.electronAPI.startDownload()
+    })
+
+    installButton.addEventListener('click', () => {
+      window.electronAPI.installUpdate()
+    })
+
+    skipButton.addEventListener('click', () => {
+      window.electronAPI.skipUpdate()
+    })
+  </script>
+</body>
+</html>

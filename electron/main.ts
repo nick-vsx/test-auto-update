@@ -20,16 +20,57 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
 let win: BrowserWindow | null
+let updateWindow: BrowserWindow | null
 
 // 清理更新緩存
 function clearUpdateCache() {
-  const updateCachePath = path.join(app.getPath('home'), 'Library/Caches/test-auto-update-updater')
-  if (fs.existsSync(updateCachePath)) {
-    fs.rmSync(updateCachePath, { recursive: true, force: true })
-  }
+  const appName = 'com.nick-vsx.test-auto-update'
+  const cachesPaths = [
+    path.join(app.getPath('home'), 'Library/Caches', appName),
+    path.join(app.getPath('home'), 'Library/Caches', `${appName}.ShipIt`)
+  ]
+
+  cachesPaths.forEach(cachePath => {
+    try {
+      if (fs.existsSync(cachePath)) {
+        console.log(`Clearing cache at: ${cachePath}`)
+        fs.rmSync(cachePath, { recursive: true, force: true })
+      }
+    } catch (error) {
+      console.error(`Failed to clear cache at ${cachePath}:`, error)
+    }
+  })
 }
 
-// 添加更新檢查函數
+// 創建更新確認視窗
+function createUpdateWindow() {
+  if (updateWindow) return; // 如果已經存在就不再創建
+
+  updateWindow = new BrowserWindow({
+    width: 400,
+    height: 200,
+    webPreferences: {
+      preload: path.join(app.getAppPath(), 'dist-electron/preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
+    },
+    frame: false,
+    resizable: false,
+    center: true
+  })
+
+  if (VITE_DEV_SERVER_URL) {
+    updateWindow.loadURL(`${VITE_DEV_SERVER_URL}update.html`)
+  } else {
+    updateWindow.loadFile(path.join(RENDERER_DIST, 'update.html'))
+  }
+
+  updateWindow.on('closed', () => {
+    updateWindow = null
+  })
+}
+
+// 檢查更新
 function checkForUpdates() {
   // 清除緩存
   clearUpdateCache()
@@ -47,38 +88,55 @@ function checkForUpdates() {
 // 設置自動更新事件監聽
 function setupAutoUpdater() {
   autoUpdater.on('checking-for-update', () => {
-    win?.webContents.send('update-checking')
+    console.log('checking for update...')
   })
 
   autoUpdater.on('update-available', (info) => {
-    win?.webContents.send('update-available', info)
-    // 手動下載更新
-    autoUpdater.downloadUpdate()
+    console.log('update available:', info.version)
+    createUpdateWindow() // 只在發現更新時創建視窗
+    // 等待視窗加載完成後再發送更新信息
+    updateWindow?.webContents.on('did-finish-load', () => {
+      updateWindow?.webContents.send('update-available', info)
+    })
   })
 
-  autoUpdater.on('update-not-available', (info) => {
-    win?.webContents.send('update-not-available', info)
+  autoUpdater.on('update-not-available', () => {
+    console.log('update not available')
+    createWindow()
   })
 
   autoUpdater.on('error', (err) => {
-    win?.webContents.send('update-error', err)
+    console.error('update error:', err)
+    if (!win) createWindow()
   })
 
   autoUpdater.on('download-progress', (progressObj) => {
-    win?.webContents.send('update-progress', progressObj)
+    if (updateWindow) {
+      updateWindow.webContents.send('update-progress', progressObj)
+    }
   })
 
   autoUpdater.on('update-downloaded', (info) => {
-    win?.webContents.send('update-downloaded', info)
+    if (updateWindow) {
+      updateWindow.webContents.send('update-downloaded', info)
+    }
   })
 
   // 設置 IPC 監聽器
-  ipcMain.on('check-for-update', () => {
-    checkForUpdates()
+  ipcMain.on('start-download', () => {
+    autoUpdater.downloadUpdate()
   })
 
-  ipcMain.on('quit-and-install', () => {
+  ipcMain.on('install-update', () => {
     autoUpdater.quitAndInstall()
+  })
+
+  ipcMain.on('skip-update', () => {
+    if (updateWindow) {
+      updateWindow.close()
+      updateWindow = null
+    }
+    createWindow()
   })
 }
 
@@ -109,6 +167,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
     win = null
+    updateWindow = null
   }
 })
 
@@ -119,11 +178,10 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(() => {
-  createWindow()
-  setupAutoUpdater()
-  
-  // 在開發環境下不檢查更新
   if (!VITE_DEV_SERVER_URL) {
+    setupAutoUpdater()
     checkForUpdates()
+  } else {
+    createWindow()
   }
 })
