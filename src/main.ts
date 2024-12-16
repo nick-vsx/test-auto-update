@@ -10,7 +10,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <a href="https://www.typescriptlang.org/" target="_blank">
       <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
     </a>
-    <h1>更新領域展開！</h1>
+    <h1>測試更新領域展開！</h1>
     <div class="version-info">
       Version: <span id="version">1.0.0</span>
     </div>
