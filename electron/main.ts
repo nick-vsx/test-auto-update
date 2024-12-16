@@ -62,7 +62,14 @@ function createUpdateWindow() {
   if (VITE_DEV_SERVER_URL) {
     updateWindow.loadURL(`${VITE_DEV_SERVER_URL}update.html`)
   } else {
-    updateWindow.loadFile(path.join(RENDERER_DIST, 'update.html'))
+    const updatePath = path.join(process.env.VITE_PUBLIC, 'update.html')
+    console.log('Update HTML path:', updatePath)
+    updateWindow.loadFile(updatePath)
+  }
+
+  // 開發時打開 DevTools
+  if (VITE_DEV_SERVER_URL) {
+    updateWindow.webContents.openDevTools()
   }
 
   updateWindow.on('closed', () => {

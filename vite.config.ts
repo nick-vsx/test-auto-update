@@ -4,6 +4,14 @@ import electron from 'vite-plugin-electron/simple'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        update: path.resolve(__dirname, 'src/update.html')
+      }
+    }
+  },
   plugins: [
     electron({
       main: {
