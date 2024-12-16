@@ -58,8 +58,6 @@
       <div class="download-info" id="downloadInfo"></div>
     </div>
     <div class="buttons">
-      <button id="updateButton" class="primary" style="display: none">下載更新</button>
-      <button id="installButton" class="primary" style="display: none">立即安裝</button>
       <button id="skipButton" class="secondary" style="display: none">稍後再說</button>
     </div>
   </div>
@@ -68,8 +66,6 @@
     const progress = document.getElementById('progress')
     const progressBar = document.getElementById('progressBar')
     const downloadInfo = document.getElementById('downloadInfo')
-    const updateButton = document.getElementById('updateButton')
-    const installButton = document.getElementById('installButton')
     const skipButton = document.getElementById('skipButton')
 
     // 更新檢查中
@@ -79,9 +75,11 @@
 
     // 發現新版本
     window.electronAPI.onUpdateAvailable((info) => {
-      status.textContent = `發現新版本: ${info.version}`
-      updateButton.style.display = 'inline-block'
+      status.textContent = `發現新版本: ${info.version}，正在下載...`
+      progress.style.display = 'block'
       skipButton.style.display = 'inline-block'
+      // 自動開始下載
+      window.electronAPI.startDownload()
     })
 
     // 下載進度
@@ -95,17 +93,17 @@
       progressBar.value = percent
       status.textContent = `正在下載更新: ${percent}%`
       downloadInfo.textContent = `${speed} MB/s (${transferred}MB / ${total}MB)`
-      
-      updateButton.style.display = 'none'
-      skipButton.style.display = 'none'
     })
 
     // 下載完成
     window.electronAPI.onUpdateDownloaded(() => {
-      status.textContent = '更新已下載完成'
+      status.textContent = '更新下載完成，正在安裝...'
       progress.style.display = 'none'
-      installButton.style.display = 'inline-block'
-      skipButton.style.display = 'inline-block'
+      skipButton.style.display = 'none'
+      // 自動安裝
+      setTimeout(() => {
+        window.electronAPI.installUpdate()
+      }, 1500) // 給使用者 1.5 秒看到完成訊息
     })
 
     // 更新錯誤
@@ -114,15 +112,7 @@
       skipButton.style.display = 'inline-block'
     })
 
-    // 按鈕事件
-    updateButton.addEventListener('click', () => {
-      window.electronAPI.startDownload()
-    })
-
-    installButton.addEventListener('click', () => {
-      window.electronAPI.installUpdate()
-    })
-
+    // 跳過按鈕事件
     skipButton.addEventListener('click', () => {
       window.electronAPI.skipUpdate()
     })
